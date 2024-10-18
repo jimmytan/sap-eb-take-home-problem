@@ -1,5 +1,6 @@
 package org.sap.wenjun.daos;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -14,13 +15,12 @@ import java.util.stream.Collectors;
 
 public class TrailDaoCsvFileImpl implements TrailDao{
 
-    private static final String TRAIL_DATA_FILE_NAME = "BoulderTrailHeads.csv";
-    private final URL resource = TrailDaoCsvFileImpl.class.getClassLoader().getResource(TRAIL_DATA_FILE_NAME);
-
     private final List<TrailInfo> trailInfos;
 
-    public TrailDaoCsvFileImpl() throws IOException {
+    public TrailDaoCsvFileImpl(File csvFile) throws IOException {
         CsvMapper csvMapper = new CsvMapper();
+        csvMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        csvMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         CsvSchema schema = csvMapper
                 .schemaFor(TrailInfo.class)
                 .withHeader()
@@ -28,7 +28,7 @@ public class TrailDaoCsvFileImpl implements TrailDao{
         MappingIterator<TrailInfo> mappingIterator = csvMapper
                 .readerFor(TrailInfo.class)
                 .with(schema)
-                .readValues(new File(resource.getFile()));
+                .readValues(csvFile);
         this.trailInfos = mappingIterator.readAll();
     }
 

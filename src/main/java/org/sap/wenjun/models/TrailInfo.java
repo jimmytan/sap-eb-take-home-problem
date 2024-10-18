@@ -1,6 +1,7 @@
 package org.sap.wenjun.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@JsonPropertyOrder({
+        "FID", "RESTROOMS", "PICNIC", "FISHING", "AKA", "AccessType", "AccessID",
+        "Class", "Address", "Fee", "BikeRack", "BikeTrail", "DogTube",
+        "Grills", "TrashCans", "ParkSpaces", "ADAsurface", "ADAtoilet",
+        "ADAfishing", "ADAcamping", "ADApicnic", "ADAtrail", "ADAparking",
+        "ADAfacilit", "ADAfacName", "HorseTrail", "DateFrom", "DateTo",
+        "RecycleBin", "DogCompost", "AccessName", "THLeash"
+})
 public class TrailInfo {
     @JsonProperty("FID")
     private int fid;
@@ -51,7 +60,7 @@ public class TrailInfo {
     private String dogTube;
 
     @JsonProperty("Grills")
-    private int grills;
+    private String grills;
 
     @JsonProperty("TrashCans")
     private int trashCans;

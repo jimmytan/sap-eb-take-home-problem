@@ -4,9 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpPrincipal;
 import org.sap.wenjun.config.ExternalVariableMockImpl;
 import org.sap.wenjun.daos.TrailDao;
 import org.sap.wenjun.daos.TrailDaoCsvFileImpl;
@@ -15,7 +13,9 @@ import org.sap.wenjun.models.TrailSearchContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,16 +34,20 @@ public class GetTrailHandler implements RequestHandler<APIGatewayProxyRequestEve
 
     private static final String WRONG_QUERY_VALUE = "Wrong %s query value. %s query parameter value should be Yes or No.";
 
+    private static final String TRAIL_DATA_FILE_NAME = "BoulderTrailHeads.csv";
+
+
     private static final Logger logger = LoggerFactory.getLogger(GetTrailHandler.class);
 
-    private final ExternalVariableMockImpl externalVariableMock;
-    private final TrailDao trailDao;
+    private ExternalVariableMockImpl externalVariableMock;
+    private TrailDao trailDao;
 
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     public GetTrailHandler() throws IOException {
         externalVariableMock = new ExternalVariableMockImpl();
-        trailDao = new TrailDaoCsvFileImpl();
+        URL resource = TrailDaoCsvFileImpl.class.getClassLoader().getResource(TRAIL_DATA_FILE_NAME);
+        trailDao = new TrailDaoCsvFileImpl(new File(resource.getFile()));
         objectMapper = new ObjectMapper();
     }
 
@@ -52,7 +56,7 @@ public class GetTrailHandler implements RequestHandler<APIGatewayProxyRequestEve
 
         try {
             Map<String, String> queryParams = apiGatewayProxyRequestEvent.getQueryStringParameters();
-            if (queryParams.containsKey(PAGE_QUERY) && !STRING_BOOLEAN_VALUES.contains(queryParams.get(PICNIC_QUERY))) {
+            if (queryParams.containsKey(PICNIC_QUERY) && !STRING_BOOLEAN_VALUES.contains(queryParams.get(PICNIC_QUERY))) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(404).withBody(String.format(WRONG_QUERY_VALUE, PICNIC_QUERY, PICNIC_QUERY));
             }
 
