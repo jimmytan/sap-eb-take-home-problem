@@ -28,9 +28,7 @@ value if it is applied.
 
 # Response
 The response body contains an object which has the following info
-* page: the current page for the search
-* pageSize: the pageSize the client is used or it is default to 10.
-* trails: the list of trails
+* trails: the list of trails in JSON format
 
 ## Further implementation
 ### Authentication and Authorization

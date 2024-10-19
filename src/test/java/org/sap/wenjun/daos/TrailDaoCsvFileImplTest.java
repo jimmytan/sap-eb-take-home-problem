@@ -1,5 +1,6 @@
 package org.sap.wenjun.daos;
 
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class TrailDaoCsvFileImplTest {
 
     private static final String YES = "Yes";
-    private static final String NO = "No";
     private static final String T1_TRAIL_CLASS = "T1";
 
     private static final String CSV_HEADER = "FID,RESTROOMS,PICNIC,FISHING,AKA,AccessType,AccessID,Class,Address,Fee,BikeRack,BikeTrail,DogTube,Grills,TrashCans,ParkSpaces,ADAsurface,ADAtoilet,ADAfishing,ADAcamping,ADApicnic,ADAtrail,ADAparking,ADAfacilit,ADAfacName,HorseTrail,DateFrom,DateTo,RecycleBin,DogCompost,AccessName,THLeash\n";
@@ -36,8 +36,9 @@ class TrailDaoCsvFileImplTest {
             writer.write(TRAIL_2);
             writer.write(TRAIL_3);
         }
+        CsvMapper csvMapper = new CsvMapper();
 
-        trailDaoCsvFile = new TrailDaoCsvFileImpl(tempCsvFile);
+        trailDaoCsvFile = new TrailDaoCsvFileImpl(tempCsvFile, csvMapper);
     }
 
     @AfterEach

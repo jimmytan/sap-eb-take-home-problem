@@ -9,7 +9,6 @@ import org.sap.wenjun.models.TrailSearchContext;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,8 +16,7 @@ public class TrailDaoCsvFileImpl implements TrailDao{
 
     private final List<TrailInfo> trailInfos;
 
-    public TrailDaoCsvFileImpl(File csvFile) throws IOException {
-        CsvMapper csvMapper = new CsvMapper();
+    public TrailDaoCsvFileImpl(File csvFile, CsvMapper csvMapper) throws IOException {
         csvMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         csvMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         CsvSchema schema = csvMapper
