@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.sap.wenjun.daos.TrailDao;
 import org.sap.wenjun.models.TrailInfo;
 import org.sap.wenjun.models.TrailSearchContext;
+import org.sap.wenjun.models.TrailSearchResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ class GetTrailHandlerTest {
     void testHandleRequest_Success() throws Exception {
         List<TrailInfo> mockTrails = new ArrayList<>();
         mockTrails.add(new TrailInfo(1, "Yes", "Yes", "No", "Trail A", "TH", "001", "T1", "Address 1", "Yes", "Yes", "No", "1", "2", 3, 4, "Asphalt", "Yes", "No", "No", "Yes", "Moderate", "Yes", "Yes", "Facility A", "Not Recommended", "2005-12-31", "2099-12-31", "Yes", "No", "Trail Name A", "Yes"));
-        Mockito.when(trailDaoMock.getTrails(any(TrailSearchContext.class))).thenReturn(mockTrails);
+        Mockito.when(trailDaoMock.getTrails(any(TrailSearchContext.class))).thenReturn(TrailSearchResponse.builder().trailInfos(mockTrails).build());
 
         APIGatewayProxyRequestEvent requestEvent = new APIGatewayProxyRequestEvent();
         requestEvent.setQueryStringParameters(Map.of("pageSize", "10", "page", "1", "picnic", "Yes", "restrooms", "Yes"));

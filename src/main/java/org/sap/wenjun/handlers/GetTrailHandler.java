@@ -11,6 +11,7 @@ import org.sap.wenjun.daos.TrailDao;
 import org.sap.wenjun.daos.TrailDaoCsvFileImpl;
 import org.sap.wenjun.models.TrailInfo;
 import org.sap.wenjun.models.TrailSearchContext;
+import org.sap.wenjun.models.TrailSearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,8 +96,8 @@ public class GetTrailHandler implements RequestHandler<APIGatewayProxyRequestEve
 
 
 
-            List<TrailInfo> trailInfos = trailDao.getTrails(searchContext);
-            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(objectMapper.writeValueAsString(trailInfos));
+            TrailSearchResponse response = trailDao.getTrails(searchContext);
+            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(objectMapper.writeValueAsString(response));
         } catch (Exception e) {
             logger.error("fail to handle the request", e);
             return new APIGatewayProxyResponseEvent().withStatusCode(500);

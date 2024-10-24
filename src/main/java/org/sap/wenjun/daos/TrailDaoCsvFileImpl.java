@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.sap.wenjun.models.TrailInfo;
 import org.sap.wenjun.models.TrailSearchContext;
+import org.sap.wenjun.models.TrailSearchResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,14 +32,22 @@ public class TrailDaoCsvFileImpl implements TrailDao{
     }
 
     @Override
-    public List<TrailInfo> getTrails(TrailSearchContext trailSearchContext) {
+    public TrailSearchResponse getTrails(TrailSearchContext trailSearchContext) {
 
-        return trailInfos.stream()
+        List<TrailInfo> allTrails = trailInfos.stream()
                 .filter(trail -> trailSearchContext.getRestrooms() == null || trail.getRestrooms().equals(trailSearchContext.getRestrooms() ))
                 .filter(trail -> trailSearchContext.getPicnic() == null ||  trail.getPicnic().equals(trailSearchContext.getPicnic() ))
                 .filter(trail -> trailSearchContext.getTrailClass() == null || trail.getTrailClass().equals(trailSearchContext.getTrailClass()))
+                .collect(Collectors.toList());
+
+        List<TrailInfo> currentPageTrailInfos = allTrails.stream()
                 .skip((trailSearchContext.getPageNumber() - 1) * trailSearchContext.getPageSize())
                 .limit(trailSearchContext.getPageSize())
                 .collect(Collectors.toList());
+
+        return TrailSearchResponse.builder()
+                .totalPage((int) Math.ceil(allTrails.size() / (trailSearchContext.getPageSize() * 1.0)))
+                .currentPage(trailSearchContext.getPageNumber())
+                .trailInfos(currentPageTrailInfos).build();
     }
 }

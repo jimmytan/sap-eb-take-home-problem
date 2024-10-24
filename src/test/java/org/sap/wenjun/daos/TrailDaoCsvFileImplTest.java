@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sap.wenjun.models.TrailInfo;
 import org.sap.wenjun.models.TrailSearchContext;
+import org.sap.wenjun.models.TrailSearchResponse;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -52,8 +53,11 @@ class TrailDaoCsvFileImplTest {
     public void testGetTrails_FilterByRestrooms() {
         TrailSearchContext searchContext = TrailSearchContext.builder().restrooms(YES).pageNumber(1).pageSize(10).build();
 
-        List<TrailInfo> filteredTrails = trailDaoCsvFile.getTrails(searchContext);
+        TrailSearchResponse response = trailDaoCsvFile.getTrails(searchContext);
+        List<TrailInfo> filteredTrails = response.getTrailInfos();
+
         assertEquals(2, filteredTrails.size());
+        assertEquals(1, response.getTotalPage());
         assertTrue(filteredTrails.stream().allMatch(trailInfo -> trailInfo.getRestrooms().equals(YES)));
     }
 
@@ -61,7 +65,9 @@ class TrailDaoCsvFileImplTest {
     public void testGetTrails_FilterByPicnic() {
         TrailSearchContext searchContext = TrailSearchContext.builder().picnic(YES).pageNumber(1).pageSize(10).build();
 
-        List<TrailInfo> filteredTrails = trailDaoCsvFile.getTrails(searchContext);
+        TrailSearchResponse response = trailDaoCsvFile.getTrails(searchContext);
+        List<TrailInfo> filteredTrails = response.getTrailInfos();
+
         assertEquals(2, filteredTrails.size());
         assertTrue(filteredTrails.stream().allMatch(trailInfo -> trailInfo.getPicnic().equals(YES)));
     }
@@ -70,7 +76,9 @@ class TrailDaoCsvFileImplTest {
     public void testGetTrails_FilterByTrailClass() {
         TrailSearchContext searchContext = TrailSearchContext.builder().trailClass(T1_TRAIL_CLASS).pageNumber(1).pageSize(10).build();
 
-        List<TrailInfo> filteredTrails = trailDaoCsvFile.getTrails(searchContext);
+        TrailSearchResponse response = trailDaoCsvFile.getTrails(searchContext);
+        List<TrailInfo> filteredTrails = response.getTrailInfos();
+
         assertEquals(1, filteredTrails.size());
         assertTrue(filteredTrails.stream().allMatch(trail -> T1_TRAIL_CLASS.equals(trail.getTrailClass())));
     }
@@ -79,12 +87,16 @@ class TrailDaoCsvFileImplTest {
     public void testGetTrails_Pagination() {
         TrailSearchContext searchContext = TrailSearchContext.builder().pageSize(2).pageNumber(1).build();
 
-        List<TrailInfo> paginatedTrails = trailDaoCsvFile.getTrails(searchContext);
-        assertEquals(2, paginatedTrails.size());
+        TrailSearchResponse response = trailDaoCsvFile.getTrails(searchContext);
+        List<TrailInfo> filteredTrails = response.getTrailInfos();
+
+        assertEquals(2, filteredTrails.size());
 
         searchContext.setPageNumber(2);
-        List<TrailInfo> nextPageTrails = trailDaoCsvFile.getTrails(searchContext);
-        assertEquals(1, nextPageTrails.size());
+        response = trailDaoCsvFile.getTrails(searchContext);
+        filteredTrails = response.getTrailInfos();
+
+        assertEquals(1, filteredTrails.size());
     }
 
 }
